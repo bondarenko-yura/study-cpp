@@ -244,41 +244,42 @@ private:
     }
 };
 
-DemoType* makeDemoType(int id) {
-    return new DemoType{id};
+//passing by reference with object created on heap
+DemoType* makeDemoTypeRefToObjInHeap(int id) {
+    return new DemoType(id);
 }
 
-DemoType* merge(DemoType& a, DemoType& b) {
-    return new DemoType(max(a.GetId(), b.GetId()) + 1);
+//this function returns a new object, not a reference to the object
+DemoType mergeGetNewObject(DemoType& a, DemoType& b) {
+    return DemoType(max(a.GetId(), b.GetId()) + 1);
 }
 
 void copyAndMove() {
+    DemoType t1;
     DemoType a0;            // default
     DemoType b0 = a0;       // copy constructor
     assert(&a0 != &b0);
 
     DemoType a1;            // custom
     DemoType b1;
-    b1 = a1;              // copy assigment
+    b1 = a1;                // copy assigment
     assert(&a1 != &b1);
     assert(a1.GetId() == b1.GetId());
 
-    auto c0 = unique_ptr<DemoType>(makeDemoType(1000)); // only one new object
-    auto c1 = unique_ptr<DemoType>(merge(*c0, a0));
+    unique_ptr<DemoType> c0 = unique_ptr<DemoType>(makeDemoTypeRefToObjInHeap(1000)); // only one new object
+    DemoType c1 = mergeGetNewObject(*c0, a0);
 
-    DemoType d0 = std::move(*c0);
+    DemoType d0 = std::move(*c0);   // move constructor
     assert(c0->GetId() == -1);
     assert(d0.GetId() == 1000);
     DemoType d1;
-    d1 = std::move(d0);
+    d1 = std::move(d0);             // move assigment
     assert(d0.GetId() == -1);
     assert(d1.GetId() == 1000);
-
 }
 
 int main() {
     copyAndMove();
-
     return 0;
 }
 
