@@ -248,12 +248,6 @@ DemoType* merge(DemoType& a, DemoType& b) {
     return new DemoType(max(a.GetId(), b.GetId()) + 1);
 }
 
-int main() {
-    copyAndMove();
-
-    return 0;
-}
-
 void copyAndMove() {
     DemoType a0;            // default
     DemoType b0 = a0;       // copy constructor
@@ -267,5 +261,11 @@ void copyAndMove() {
 
     auto c0 = unique_ptr<DemoType>(makeDemoType(1000)); // only one new object
     auto c1 = unique_ptr<DemoType>(merge(*c0, a0));
+}
+
+int main() {
+    copyAndMove();
+
+    return 0;
 }
 
