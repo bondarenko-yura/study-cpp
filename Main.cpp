@@ -207,7 +207,9 @@ public:
     }
 
     //    DemoType(DemoType&&) = delete;
-    DemoType(DemoType&&) {
+    DemoType(DemoType&& t) {
+        id_ = t.id_;
+        t.id_ = DEFAULT_ID;
         PrintDetails_("move constructor");
     }
 
@@ -219,8 +221,11 @@ public:
     }
 
     //    DemoType& operator=(DemoType&&) = delete;
-    DemoType& operator=(DemoType&&) {
+    DemoType& operator=(DemoType&& t) {
+        id_ = t.id_;
+        t.id_ = DEFAULT_ID;
         PrintDetails_("move assignment: clean up target and move");
+        return *this;
     }
 
     ~DemoType() {
@@ -230,8 +235,9 @@ public:
     int GetId() const { return id_; }
 
 private:
+    constexpr static int DEFAULT_ID = -1;
     int unique_id_ = IDS++;
-    int id_ = -1;
+    int id_ = DEFAULT_ID;
 
     void PrintDetails_(const string& prefix) const {
         print_line(prefix + ", id: " + to_string(GetId()) + ", unique_id: " + to_string(unique_id_));
@@ -259,6 +265,15 @@ void copyAndMove() {
 
     auto c0 = unique_ptr<DemoType>(makeDemoType(1000)); // only one new object
     auto c1 = unique_ptr<DemoType>(merge(*c0, a0));
+
+    DemoType d0 = std::move(*c0);
+    assert(c0->GetId() == -1);
+    assert(d0.GetId() == 1000);
+    DemoType d1;
+    d1 = std::move(d0);
+    assert(d0.GetId() == -1);
+    assert(d1.GetId() == 1000);
+
 }
 
 int main() {
