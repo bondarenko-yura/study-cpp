@@ -238,8 +238,6 @@ private:
     }
 };
 
-void copyAndMove();
-
 DemoType* makeDemoType(int id) {
     return new DemoType{id};
 }
