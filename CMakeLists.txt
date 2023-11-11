@@ -3,4 +3,5 @@ project(cpp-study)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(cpp-study Main.cpp)
+add_executable(cpp-study Main.cpp
+        printer.cpp)
